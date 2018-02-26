@@ -33,7 +33,17 @@ const getPerfResults = () => {
 
 const print = () => {
   // tslint:disable-next-line:no-console
-  console.log('hehlo', updateMap);
+  const printAbleObject = {};
+  updateMap.forEach((values, key: string) => {
+    return Object.assign(printAbleObject, {
+      [key]: {
+        ...values,
+        children: values.children.child.name,
+        props: Object.keys(values.props),
+      },
+    });
+  });
+  console.table(printAbleObject);
 };
 
 const start = () => {
