@@ -1,10 +1,33 @@
-import * as isEqual from 'lodash.isequal';
+// tslint:disable-next-line:import-blacklist
+import { isEqual } from 'lodash-es';
+import { ReactElement } from 'react';
 
 // ------------------------------------
 //  SingleTon
 // ------------------------------------
 
+declare const PerformanceObserver: any;
+
+interface Window {
+  __MONKEY_PATCH_FIRE__: {
+    getPerfResults: any;
+    start: any;
+    stop: any;
+    print: any;
+  };
+}
+
 const updateMap: UpdateMapShape = new Map();
+
+type ComponentInstance = {
+  _reactInternalFiber: any,
+  child: ComponentInstance,
+  type?: {
+    name: string;
+  },
+  props: any,
+  state: any,
+};
 
 type PerformanceEntryType = 'measure' | 'mark';
 type PerformanceEntry = {
@@ -14,24 +37,24 @@ type PerformanceEntry = {
   startTime: number,
 };
 
+type PerformanceObserverEntryList = {
+  getEntries(): PerformanceEntry[];
+  getEntriesByName(name: string, type: PerformanceEntryType): PerformanceEntry[];
+  getEntriesByType(type: PerformanceEntryType): PerformanceEntry[];
+};
+
 const getPerfResults = () => {
-  const observer = new PerformanceObserver((list) => {
+  const observer = new PerformanceObserver((list: PerformanceObserverEntryList) => {
     const entries = list.getEntriesByType('measure');
     entries.map((entry: PerformanceEntry) => {
       updateMap.forEach((value, key) => {
-        if (entry.name.includes(key)) {
-          updateMapPerformance(updateMap, key, entry);
+        if (entry.name.includes(key as string)) {
+          updateMapPerformance(updateMap, key as string, entry);
         }
       });
     });
   });
   observer.observe({ entryTypes: ['measure'] });
-  Object.defineProperty(window, '__MONKEY_PATCH_FIRE__', {
-    value: {
-      observer,
-    },
-    writable: false,
-  });
 };
 
 
@@ -46,21 +69,15 @@ const print = () => {
       },
     });
   });
+
+  // tslint:disable-next-line:no-console
   console.table(printAbleObject);
 };
 
 const start = () => {
   getPerfResults();
-  
   // tslint:disable-next-line:no-console
   console.log('start', updateMap);
-};
-
-const stop = () => {
-  const { observer } = window.__MONKEY_PATCH_FIRE__;
-  observer.disconnect();
-  // tslint:disable-next-line:no-console
-  console.log('Observer disconnected');
 };
 
 // ------------------------------------
@@ -82,16 +99,17 @@ const getChildDisplayName = (o: any) => {
 
 
 // Recursive function to build an object of components children
-const addToChilren = (componentInstance: any): any =>
+const addToChilren = (componentInstance: ComponentInstance): any =>
   getChildDisplayName(componentInstance)
   ? {
     name: getChildDisplayName(componentInstance),
     child: componentInstance.child && addToChilren(componentInstance.child),
-  } : componentInstance.child && addToChilren(componentInstance.child);
+  }
+  : componentInstance.child && addToChilren(componentInstance.child);
 
 
 // init func for the addToChildren.
-const getChildren = (componentInstance: any) => {
+const getChildren = (componentInstance: ComponentInstance) => {
   const children = {
     name: getChildDisplayName(componentInstance),
     child: addToChilren(componentInstance),
@@ -104,7 +122,7 @@ const getDisplayName = (o: any) =>
 
 
 // function to return only props if they are deeply equal but not shallow equal
-const checkChangesProps = (prevProps: any, componentInstance: any) => {
+const checkChangesProps = (prevProps: any, componentInstance: ComponentInstance) => {
   return [
     ...Object.keys(prevProps),
     ...Object.keys(componentInstance.props),
@@ -113,7 +131,9 @@ const checkChangesProps = (prevProps: any, componentInstance: any) => {
     const nextValue = prevProps[key];
     // https://github.com/maicki/why-did-you-update/issues/18
     // return clues on what changed and why. see above ^
-    if (nextValue !== actualValue && isEqual(nextValue, actualValue)) {
+    // nextValue !== actualValue &&
+    if (isEqual(nextValue, actualValue)) {
+      // console.log(displayName , nextValue, actualValue);
       acc[key] = { actualValue, nextValue };
     }
 
@@ -129,13 +149,12 @@ const checkChangesProps = (prevProps: any, componentInstance: any) => {
 function createComponentDidUpdate(updateMap: UpdateMapShape) {
   return function componentDidUpdate(prevProps: any, prevState: any) {
     // tslint:disable-next-line:no-var-self
-    const componentInstance: any = this;
-    const displayName = getDisplayName(componentInstance);
+    const componentInstance: ComponentInstance = this;
 
+    const displayName = getDisplayName(componentInstance);
     const changedProps = checkChangesProps(prevProps, componentInstance);
 
     if (Object.keys(changedProps).length) {
-
       updateMapfn(
         updateMap,
         displayName,
@@ -145,7 +164,6 @@ function createComponentDidUpdate(updateMap: UpdateMapShape) {
     }
   };
 }
-
 
 // ------------------------------------
 //  Update function
@@ -160,6 +178,7 @@ type updateMapValues = {
   wastedDurationInMS: number,
 };
 
+
 const updateMapfn = (
   map: UpdateMapShape,
   displayName: string,
@@ -168,7 +187,6 @@ const updateMapfn = (
 ) => {
   if (map.has(displayName)) {
     const updatedMapVaules = map.get(displayName);
-    // console.log('map get', map.get(displayName));
     map.set(displayName, Object.assign(updatedMapVaules, {
       updates: updatedMapVaules ? updatedMapVaules.updates + 1 : 0,
     }));
@@ -186,11 +204,13 @@ const updateMapPerformance = (
   map: UpdateMapShape,
   key: string,
   entry: PerformanceEntry,
-): UpdateMapShape => {
+) => {
   const updatedMapVaules = map.get(key);
-  return map.set(key, Object.assign(updatedMapVaules, {
-    wastedDurationInMS: updatedMapVaules.wastedDurationInMS + entry.duration,
-  }));
+  if (updatedMapVaules) {
+    return map.set(key, Object.assign(updatedMapVaules, {
+      wastedDurationInMS: updatedMapVaules.wastedDurationInMS + Math.floor(entry.duration),
+    }));
+  }
 };
 
 
@@ -200,8 +220,8 @@ const updateMapPerformance = (
 
 export const monkeyPatchFire = (React: any, opts = {}) => {
   const _componentDidUpdate = React.Component.prototype.componentDidUpdate;
-
   React.Component.prototype.componentDidUpdate = createComponentDidUpdate(updateMap);
+
 
   if (window) {
     Object.defineProperty(window, '__MONKEY_PATCH_FIRE__', {
@@ -209,22 +229,14 @@ export const monkeyPatchFire = (React: any, opts = {}) => {
         updateMap,
         print,
         start,
-        stop,
         getPerfResults,
       },
       writable: false,
     });
   }
 
-  // not sure is needed
-  React.__RESTORE_FN__ = () => {
-    React.Component.prototype.componentDidUpdate = _componentDidUpdate;
-    delete React.__RESTORE_FN__;
-  };
-
   return React;
 };
 
-
-// @TODO: extend to include Component State as well! even possible?
 // @TODO: expose updateMap so can create a flameGraph
+// @TODO: extend to include Component State as well! even possible?

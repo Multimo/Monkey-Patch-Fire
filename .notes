@@ -1,0 +1,79 @@
+
+// Other libraries that do things interestingly
+
+// https://github.com/nitin42/react-perf-devtool
+// How to get Data, put into new PerformanceObserver?
+
+// var observer = new PerformanceObserver(function(list, obj) {
+//   var entries = list.getEntriesByType("measure");
+//   for (var i=0; i < entries.length; i++) {
+//     console.log(entries)
+//   }
+// });
+// observer.observe({entryTypes: ["measure"]});
+
+// function perf_observer(list, observer) {
+//    console.log('ob2:', entries)a
+// }
+// var observer2 = new PerformanceObserver(perf_observer);
+// observer2.observe({entryTypes: ["measure"]});
+
+// React Component Tree?
+// Todo or not todo?
+
+
+
+// https://github.com/React-Sight/React-Sight
+// injects script via chrome extension hook
+// monkey patches their injector hooks and updates tree based on that.
+//
+// window.__REACT_DEVTOOLS_GLOBAL_HOOK__.onCommitFiberRoot =  (function (original) {
+//   return function (...args) {
+//     console.log('DOM: ', args[1]); // logs the vdom
+
+//     return original(...args);
+//   };
+// })(window.__REACT_DEVTOOLS_GLOBAL_HOOK__.onCommitFiberRoot);
+
+// https://github.com/react-rpm/react-rpm
+
+
+
+// const json = {
+//   mounted: true
+//   options: {wait: false, withRef: false, bindI18n: "languageChanged loaded", bindStore: "added removed", translateFuncName: "t", …}
+//   props: {ns: Array(1), wait: false, withRef: false, bindI18n: "languageChanged loaded", bindStore: "added removed", }
+//   refs: {}
+//   state: {i18nLoadedAt: null, ready: true}
+//   t: ƒ fixedT(key, opts)
+//   updater: {isMounted: ƒ, enqueueSetState: ƒ, enqueueReplaceState: ƒ, enqueueForceUpdate: ƒ}
+//   __reactInternalMemoizedMaskedChildContext: {i18n: I18n}
+//   __reactInternalMemoizedMergedChildContext: {i18n: I18n, store: {…}, storeSubscription: null, @@contextSubscriber/router: {…}, router: {…}, …}
+// __reactInternalMemoizedUnmaskedChildContext: {i18n: I18n, store;: {…}, storeSubscription: null,; @@contextSubscriber/router: {…}, router: {…}, …};
+//                                               _reactInternalFiber: FiberNode; {tag: 2, key;: null, type;: ƒ, stateNode: I18n,  return: FiberNode,  …}
+//                                               _reactInternalInstance: {_processChildContext: ƒ}
+//                                               isMounted: (...)
+//   replaceState:                               (...)
+//   __proto__:                                  Component
+//                                               componentDidMount: ƒ componentDidMount()
+//                                               componentWillMount: ƒ componentWillMount()
+//                                               componentWillUnmount: ƒ componentWillUnmount()
+//                                               constructor: ƒ I18n(props, context)
+//                                               getChildContext: ƒ getChildContext()
+//                                               getI18nTranslate: ƒ getI18nTranslate()
+//                                               isMounted: (...)
+//   onI18nChanged:                              ƒ onI18nChanged()
+//                                               arguments: (...)
+//   caller:                                     (...)
+//   length:                                     0
+//                                               name: 'onI18nChanged'
+//                                               prototype: {constructor: ƒ}
+//                                               render: ƒ render()
+//                                               replaceState: (...)
+//   __proto__; :                                [Object Object];
+// }
+
+
+// Use below to get the children of a component.
+
+
