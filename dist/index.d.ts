@@ -1,1 +1,1 @@
-export declare const monkeyPatchFire: (React: any, opts?: {}) => any;
+export declare const monkeyPatchFire: (React: any) => any;

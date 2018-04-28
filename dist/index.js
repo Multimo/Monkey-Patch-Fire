@@ -130,8 +130,7 @@ var updateMapPerformance = function (map, key, entry) {
 // ------------------------------------
 //  Monkey Patcher
 // ------------------------------------
-exports.monkeyPatchFire = function (React, opts) {
-    if (opts === void 0) { opts = {}; }
+exports.monkeyPatchFire = function (React) {
     var _componentDidUpdate = React.Component.prototype.componentDidUpdate;
     React.Component.prototype.componentDidUpdate = createComponentDidUpdate(updateMap);
     if (window) {

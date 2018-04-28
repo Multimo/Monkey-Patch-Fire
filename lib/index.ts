@@ -218,10 +218,9 @@ const updateMapPerformance = (
 //  Monkey Patcher
 // ------------------------------------
 
-export const monkeyPatchFire = (React: any, opts = {}) => {
+export const monkeyPatchFire = (React: any) => {
   const _componentDidUpdate = React.Component.prototype.componentDidUpdate;
   React.Component.prototype.componentDidUpdate = createComponentDidUpdate(updateMap);
-
 
   if (window) {
     Object.defineProperty(window, '__MONKEY_PATCH_FIRE__', {
