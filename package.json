@@ -1,0 +1,26 @@
+{
+  "name": "monkey-patch-fire",
+  "version": "1.0.0",
+  "description": "React Performance Tool for investigating Rerenders",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "typescript": "^2.7.2",
+    "lodash.isequal": "^4.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Multimo/Monkey-Patch-Fire.git"
+  },
+  "author": "Tim Mulqueen <tim.mulqueen@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Multimo/Monkey-Patch-Fire/issues"
+  },
+  "homepage": "https://github.com/Multimo/Monkey-Patch-Fire#readme"
+}

@@ -1,6 +1,5 @@
 // tslint:disable-next-line:import-blacklist
-import { isEqual } from 'lodash-es';
-import { ReactElement } from 'react';
+import { isEqual } from 'lodash';
 
 // ------------------------------------
 //  SingleTon
@@ -60,9 +59,9 @@ const getPerfResults = () => {
 
 const print = () => {
   const printAbleObject = {};
-  updateMap.forEach((values, key: string) => {
+  updateMap.forEach((values, key) => {
     return Object.assign(printAbleObject, {
-      [key]: {
+      [String(key)]: {
         ...values,
         children: values.children.child.name,
         props: Object.keys(values.props).join(),
@@ -188,6 +187,7 @@ const updateMapfn = (
   if (map.has(displayName)) {
     const updatedMapVaules = map.get(displayName);
     map.set(displayName, Object.assign(updatedMapVaules, {
+      ...updatedMapVaules,
       updates: updatedMapVaules ? updatedMapVaules.updates + 1 : 0,
     }));
   } else {
