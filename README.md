@@ -13,6 +13,22 @@ The timings are important for getting an idea of where to put your time. Potenti
 
 `ShouldComponentUpdate()` should be used as a last resort to solve rendering problems. Quite often using this will hide the actual issues, much like the css property `!important` does with CSS specificity. There is a performance hit to looking up properties in Javascript, so there is the potential side effect of making your app actually slower using this.
 
+# How to Install
+
+You will need to import the package and pass in the React Instance, this needs to be done where you hydrate your app on the clientside.
+
+You should only run this in development.
+
+```
+import React from 'react';
+import MonkeyPatchFire from 'monkey-patch-fire';
+
+if (enviroment === 'development') {
+  MonkeyPatchFire(React);
+}
+
+```
+
 ## ETHOS
 
 For a MVP i would like to see:
