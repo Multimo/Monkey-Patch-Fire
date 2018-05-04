@@ -1,5 +1,17 @@
 # Monkey-Patch-Fire
-Just another React Performance Tool.
+A way to investigate and find unecessary component re-renderings in your react apps.
+
+# Why did I make this:
+
+I made this because I wanted to know react in greater detail. React is fantastic for writting UI but once you start looking at performance you need a way to conceptualise its re-rendering modal. This started out as a helper function to see why certain components were re-rendering and once React 16 came out I was able to combine it with the browsers performance api to get the timings. Essentially, this tool will log any React.Class component in which has updated but has deeply equal props to its previous props. One thing to note is if you pass new props to a functional component it will React will always re-render the component.
+
+The timings are important for getting an idea of where to put your time. Potentially, you could have a component in which is re-rendering 100 times but only taking 2ms, its most likely not worth trying to optimise it. But if you have a component which is only re-rendering 2 times but is take 200ms it could be a signal to break up this component into a flatter tree or to see why exactly that prop is re-rendering.
+
+### Opinion:
+
+`ShouldComponentUpdate() === !important` 
+
+`ShouldComponentUpdate()` should be used as a last resort to solve rendering problems. Quite often using this will hide the actual issues, much like the css property `!important` does with CSS specificity. There is a performance hit to looking up properties in Javascript, so there is the potential side effect of making your app actually slower using this.
 
 ## ETHOS
 
